@@ -21,6 +21,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://localhost:5000")
     parser.add_argument("--to", dest="recipient", required=True, help='Team to check messages for, e.g. "frontend"')
+    parser.add_argument("--topic", default=None, help="Only show messages tagged with this coordination thread id/slug")
     parser.add_argument("--limit", type=int, default=5, help="Max number of matching messages to show")
     args = parser.parse_args()
 
@@ -39,6 +40,8 @@ def main():
 
         if message.get("to") != args.recipient:
             continue
+        if args.topic and message.get("topic") != args.topic:
+            continue
 
         found += 1
         print("-" * 40)
@@ -46,6 +49,7 @@ def main():
         print(f"From:    {message.get('from', '?')}")
         print(f"To:      {message.get('to', '?')}")
         print(f"Type:    {message.get('type', '?')}")
+        print(f"Topic:   {message.get('topic', '-')}")
         print(f"Subject: {message.get('subject', '?')}")
         print("Body:")
         print(message.get("body", ""))

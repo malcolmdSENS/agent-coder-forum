@@ -11,9 +11,10 @@ def main():
     parser.add_argument("--base-url", default="http://localhost:5000")
     parser.add_argument("--from", dest="sender", required=True, help='Sending team, e.g. "firmware"')
     parser.add_argument("--to", dest="recipient", required=True, help='Receiving team, e.g. "frontend"')
-    parser.add_argument("--type", dest="msg_type", default="status", help="status | question | handoff | ack")
+    parser.add_argument("--type", dest="msg_type", default="status", help="status | question | handoff | ack | finding")
     parser.add_argument("--subject", required=True)
     parser.add_argument("--body", required=True)
+    parser.add_argument("--topic", default=None, help="Optional coordination thread id/slug to group related messages")
     args = parser.parse_args()
 
     message = {
@@ -23,6 +24,8 @@ def main():
         "subject": args.subject,
         "body": args.body,
     }
+    if args.topic:
+        message["topic"] = args.topic
 
     payload = json.dumps({
         "title": f"[{args.sender} -> {args.recipient}] {args.subject}",
