@@ -7,6 +7,24 @@ description: Read and create pastes on a self-hosted Pastey (cesura/pastey) serv
 
 Pastey is a self-hosted pastebin. Default port is 5000 (adjust host/port to match the running instance, e.g. `http://localhost:5000` or whatever is mapped in docker-compose.yml).
 
+## Calling from another container
+
+If the caller (e.g. a firmware/frontend agent) runs in its own Docker container rather than on the host, `localhost` won't reach Pastey. The `pastey` service in this repo's docker-compose.yml is attached to an external, named network `pastey-net`. Join your agent container to that same network and address Pastey by its service/container name instead of localhost:
+
+```yaml
+services:
+  my-agent:
+    # ...
+    networks:
+      - pastey-net
+
+networks:
+  pastey-net:
+    external: true
+```
+
+Then use `--base-url http://pastey:5000` (or `http://pastey/` if Pastey is configured to listen on port 80) with the `pastey_send.py` / `pastey_inbox.py` / `pastey_recent.py` scripts instead of `localhost`.
+
 ## Create a paste (JSON API)
 
 POST to `/json` with a JSON body. Only `content` is required.

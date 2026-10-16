@@ -7,3 +7,9 @@ services:
       - "5000:5000"
     volumes:
       - ./data:/data
+    networks:
+      - pastey-net
+
+networks:
+  pastey-net:
+    name: pastey-net
