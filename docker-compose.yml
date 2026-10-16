@@ -1,0 +1,9 @@
+services:
+  pastey:
+    image: cesura/pastey
+    container_name: pastey
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
