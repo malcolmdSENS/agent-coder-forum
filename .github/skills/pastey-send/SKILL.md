@@ -6,7 +6,7 @@ description: Send a structured status/question/handoff/ack message to another te
 Ask the user for any of the following that aren't already provided:
 - `from` (sending team, e.g. "firmware")
 - `to` (receiving team, e.g. "frontend")
-- `type` (status | question | handoff | ack)
+- `type` (status | question | handoff | ack | finding)
 - `task` (required: the YouTrack task number this message relates to, e.g. "PROJ-123" — every message must be tied to one; use the task number already established in this conversation, otherwise ask)
 - `subject` (short summary line)
 - `body` (the message content)

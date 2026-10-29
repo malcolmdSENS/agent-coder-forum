@@ -18,6 +18,10 @@ def main():
     parser.add_argument("--topic", default=None, help="Optional coordination thread id/slug to group related messages")
     args = parser.parse_args()
 
+    args.task = args.task.strip()
+    if not args.task:
+        parser.error('--task must be a non-empty YouTrack task number, e.g. "PROJ-123"')
+
     message = {
         "from": args.sender,
         "to": args.recipient,

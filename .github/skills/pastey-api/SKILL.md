@@ -27,6 +27,8 @@ Then use `--base-url http://pastey:5000` (or `http://pastey/` if Pastey is confi
 
 ## Create a paste (JSON API)
 
+For team-to-team coordination messages, do not post with raw curl: use `python scripts/pastey_send.py ... --task <task>` (see the `pastey-send` skill) so every message carries its required YouTrack task number. The raw API below is for plain, non-coordination pastes only.
+
 POST to `/json` with a JSON body. Only `content` is required.
 
 ```powershell

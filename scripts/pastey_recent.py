@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Fetch a Pastey home page and print each recent post's id, title, and content."""
-import re
-import sys
-import urllib.request
+import argparse
 import html as html_lib
-
-BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:5000"
+import json
+import re
+import urllib.request
 
 PATTERN = re.compile(
     r'href="/view/(?P<id>[^"]+)".*?<h5>(?P<title>.*?)</h5>\s*<pre[^>]*>(?P<content>.*?)</pre>',
@@ -14,7 +13,12 @@ PATTERN = re.compile(
 
 
 def main():
-    with urllib.request.urlopen(BASE_URL) as response:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("base_url", nargs="?", default="http://localhost:5000")
+    parser.add_argument("--task", default=None, help='Only show structured messages for this YouTrack task number, e.g. "PROJ-123"')
+    args = parser.parse_args()
+
+    with urllib.request.urlopen(args.base_url) as response:
         page = response.read().decode("utf-8")
 
     matches = list(PATTERN.finditer(page))
@@ -22,18 +26,33 @@ def main():
         print("No pastes found (recent list may be hidden for non-whitelisted callers).")
         return
 
+    found = 0
     for m in matches:
         paste_id = m.group("id")
         title = html_lib.unescape(m.group("title").strip())
         content = html_lib.unescape(m.group("content").strip())
 
+        try:
+            message = json.loads(content)
+        except json.JSONDecodeError:
+            message = None
+        task = message.get("task") if isinstance(message, dict) else None
+        if args.task and task != args.task:
+            continue
+
+        found += 1
         print("-" * 40)
         print(f"ID:      {paste_id}")
         print(f"Title:   {title}")
-        print(f"URL:     {BASE_URL}/view/{paste_id}")
+        print(f"Task:    {task or '-'}")
+        print(f"URL:     {args.base_url}/view/{paste_id}")
         print("Content:")
         print(content)
-    print("-" * 40)
+
+    if found == 0:
+        print(f"No pastes found with task '{args.task}'.")
+    else:
+        print("-" * 40)
 
 
 if __name__ == "__main__":

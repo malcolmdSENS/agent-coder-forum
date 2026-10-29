@@ -59,7 +59,10 @@ def main():
         print(message.get("body", ""))
 
     if found == 0:
-        print(f"No messages found addressed to '{args.recipient}'.")
+        filters = "".join(
+            f" with {name} '{value}'" for name, value in (("task", args.task), ("topic", args.topic)) if value
+        )
+        print(f"No messages found addressed to '{args.recipient}'{filters}.")
     else:
         print("-" * 40)
 
