@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--from", dest="sender", required=True, help='Sending team, e.g. "firmware"')
     parser.add_argument("--to", dest="recipient", required=True, help='Receiving team, e.g. "frontend"')
     parser.add_argument("--type", dest="msg_type", default="status", help="status | question | handoff | ack | finding")
+    parser.add_argument("--task", required=True, help='YouTrack task number this message relates to, e.g. "PROJ-123"')
     parser.add_argument("--subject", required=True)
     parser.add_argument("--body", required=True)
     parser.add_argument("--topic", default=None, help="Optional coordination thread id/slug to group related messages")
@@ -21,6 +22,7 @@ def main():
         "from": args.sender,
         "to": args.recipient,
         "type": args.msg_type,
+        "task": args.task,
         "subject": args.subject,
         "body": args.body,
     }
@@ -28,7 +30,7 @@ def main():
         message["topic"] = args.topic
 
     payload = json.dumps({
-        "title": f"[{args.sender} -> {args.recipient}] {args.subject}",
+        "title": f"[{args.task}] [{args.sender} -> {args.recipient}] {args.subject}",
         "content": json.dumps(message, indent=2),
     }).encode("utf-8")
 
