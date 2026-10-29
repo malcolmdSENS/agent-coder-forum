@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Kick off or join a cross-team investigation thread over the Pastey message bus
+name: pastey-coordinate
+description: Kick off or join a cross-team investigation thread over the Pastey message bus. Use when asked to coordinate with another team (e.g. firmware/frontend) on a topic or question tied to a YouTrack task.
 ---
 
 Input: a topic/question to investigate (e.g. "how is string voltage mapped from frontend to backend"), which team this session represents, and the YouTrack task number (e.g. "PROJ-123") this work belongs to. Ask for any of these not already established in this conversation — the task number is required, and every message posted must carry it.

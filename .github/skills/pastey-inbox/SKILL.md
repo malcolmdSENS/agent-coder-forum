@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Check the Pastey message bus for the latest messages addressed to a team
+name: pastey-inbox
+description: Check the Pastey message bus for the latest messages addressed to a team. Use when asked to check a team's inbox or read messages from another team's agent.
 ---
 
 Ask the user which team's inbox to check (e.g. "firmware" or "frontend") if not already specified.

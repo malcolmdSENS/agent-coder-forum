@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copy the Pastey scripts, prompt commands and skill into one or more projects.
+# Copy the Pastey scripts and skills into one or more projects.
 # Usage: ./install-to-project.sh <project-dir> [<project-dir> ...]
 set -euo pipefail
 
@@ -18,10 +18,18 @@ for dest in "$@"; do
     continue
   fi
 
-  mkdir -p "$dest/scripts" "$dest/.github/prompts" "$dest/.copilot/skills"
+  mkdir -p "$dest/scripts" "$dest/.github/skills"
   cp -v "$src"/scripts/pastey_*.py "$dest/scripts/"
-  cp -v "$src"/.github/prompts/pastey-*.prompt.md "$dest/.github/prompts/"
-  cp -rv "$src/.copilot/skills/pastey-api" "$dest/.copilot/skills/"
+  for skill in "$src"/.github/skills/pastey-*/; do
+    name="$(basename "$skill")"
+    rm -rf "$dest/.github/skills/$name"
+    cp -rv "$skill" "$dest/.github/skills/$name"
+  done
+
+  # Remove legacy locations from earlier installs (prompts are now skills)
+  rm -fv "$dest"/.github/prompts/pastey-*.prompt.md
+  rm -rfv "$dest/.copilot/skills/pastey-api"
+  rmdir "$dest/.github/prompts" "$dest/.copilot/skills" "$dest/.copilot" 2>/dev/null || true
   echo "Updated $dest"
 done
 

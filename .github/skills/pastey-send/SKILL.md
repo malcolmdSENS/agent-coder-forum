@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Send a structured status/question/handoff message to another team via the Pastey message bus
+name: pastey-send
+description: Send a structured status/question/handoff/ack message to another team via the Pastey message bus. Use when asked to message, notify, or hand off to another team.
 ---
 
 Ask the user for any of the following that aren't already provided:

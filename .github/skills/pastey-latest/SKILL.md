@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: Fetch and echo the most recent paste from the running Pastey server
+name: pastey-latest
+description: Fetch and echo the most recent paste from the running Pastey server. Use when asked for the latest/most recent paste.
 ---
 
 Run `python scripts/pastey_recent.py [base_url]` to fetch and parse the Pastey home page (default base URL `http://localhost:5000`, or the port mapped in this repo's docker-compose.yml).
