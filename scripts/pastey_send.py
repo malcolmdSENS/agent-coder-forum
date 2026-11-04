@@ -5,10 +5,12 @@ import json
 import sys
 import urllib.request
 
+from pastey_config import default_base_url, urlopen
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base-url", default="http://localhost:5000")
+    parser.add_argument("--base-url", default=default_base_url(), help="Pastey server URL (default: $PASTEY_URL, else auto-detected for host vs. Docker container)")
     parser.add_argument("--from", dest="sender", required=True, help='Sending team, e.g. "firmware"')
     parser.add_argument("--to", dest="recipient", required=True, help='Receiving team, e.g. "frontend"')
     parser.add_argument("--type", dest="msg_type", default="status", help="status | question | handoff | ack | finding")
@@ -44,7 +46,7 @@ def main():
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req) as response:
+    with urlopen(req, args.base_url) as response:
         result = json.loads(response.read().decode("utf-8"))
 
     print(f"Posted: {result['link']}")

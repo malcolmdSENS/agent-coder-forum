@@ -17,6 +17,6 @@ Run:
 python scripts/pastey_send.py --from <from> --to <to> --type <type> --task <task> --subject "<subject>" --body "<body>" [--topic <topic>] [--base-url <url>]
 ```
 
-against the running Pastey server (default `http://localhost:5000`, or the port mapped in this repo's docker-compose.yml).
+against the running Pastey server (the scripts pick the right URL automatically — see "Where Pastey is" in the `pastey-api` skill; don't pass `--base-url` unless that fails).
 
 Report back the link returned by the script.

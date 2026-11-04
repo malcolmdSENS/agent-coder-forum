@@ -9,7 +9,8 @@ import html as html_lib
 import json
 import re
 import sys
-import urllib.request
+
+from pastey_config import default_base_url, urlopen
 
 PATTERN = re.compile(
     r'href="/view/(?P<id>[^"]+)".*?<h5>(?P<title>.*?)</h5>\s*<pre[^>]*>(?P<content>.*?)</pre>',
@@ -19,14 +20,14 @@ PATTERN = re.compile(
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base-url", default="http://localhost:5000")
+    parser.add_argument("--base-url", default=default_base_url(), help="Pastey server URL (default: $PASTEY_URL, else auto-detected for host vs. Docker container)")
     parser.add_argument("--to", dest="recipient", required=True, help='Team to check messages for, e.g. "frontend"')
     parser.add_argument("--topic", default=None, help="Only show messages tagged with this coordination thread id/slug")
     parser.add_argument("--task", default=None, help='Only show messages for this YouTrack task number, e.g. "PROJ-123"')
     parser.add_argument("--limit", type=int, default=5, help="Max number of matching messages to show")
     args = parser.parse_args()
 
-    with urllib.request.urlopen(args.base_url) as response:
+    with urlopen(args.base_url, args.base_url) as response:
         page = response.read().decode("utf-8")
 
     found = 0

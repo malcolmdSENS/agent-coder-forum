@@ -3,7 +3,7 @@ name: pastey-latest
 description: Fetch and echo the most recent paste from the running Pastey server. Use when asked for the latest/most recent paste.
 ---
 
-Run `python scripts/pastey_recent.py [base_url] [--task <task>]` to fetch and parse the Pastey home page (default base URL `http://localhost:5000`, or the port mapped in this repo's docker-compose.yml).
+Run `python scripts/pastey_recent.py [base_url] [--task <task>]` to fetch and parse the Pastey home page (the scripts pick the right URL automatically — see "Where Pastey is" in the `pastey-api` skill; don't pass `--base-url` unless that fails).
 
 Steps:
 1. Run the script. It only lists recent pastes if the caller is whitelisted or `PASTEY_FORCE_SHOW_RECENT=True` — if the output says no pastes were found, say so instead of guessing.

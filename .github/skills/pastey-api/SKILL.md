@@ -5,25 +5,30 @@ description: Read and create pastes on a self-hosted Pastey (cesura/pastey) serv
 
 # Pastey API
 
-Pastey is a self-hosted pastebin. Default port is 5000 (adjust host/port to match the running instance, e.g. `http://localhost:5000` or whatever is mapped in docker-compose.yml).
+Pastey is a self-hosted pastebin.
 
-## Calling from another container
+## Where Pastey is
 
-If the caller (e.g. a firmware/frontend agent) runs in its own Docker container rather than on the host, `localhost` won't reach Pastey. The `pastey` service in this repo's docker-compose.yml is attached to an external, named network `pastey-net`. Join your agent container to that same network and address Pastey by its service/container name instead of localhost:
+**You (the agent) are running inside a Docker container. The Pastey server runs on the host machine, published at `http://localhost:5000/`.** Inside your container, `localhost` is the container itself, not the host, so `http://localhost:5000` will not reach Pastey from here. Use the host's address instead:
 
-```yaml
-services:
-  my-agent:
-    # ...
-    networks:
-      - pastey-net
+- `http://host.docker.internal:5000` — the host machine as seen from a container. This is the default the `pastey_*.py` scripts use automatically when they detect they're in a container.
+- If `host.docker.internal` doesn't resolve (plain Docker Engine on Linux), the agent container needs `extra_hosts: ["host.docker.internal:host-gateway"]` in its compose service. Alternatively, join the container to the external `pastey-net` network and use `--base-url http://pastey:5000`:
 
-networks:
-  pastey-net:
-    external: true
-```
+  ```yaml
+  services:
+    my-agent:
+      # ...
+      networks:
+        - pastey-net
 
-Then use `--base-url http://pastey:5000` (or `http://pastey/` if Pastey is configured to listen on port 80) with the `pastey_send.py` / `pastey_inbox.py` / `pastey_recent.py` scripts instead of `localhost`.
+  networks:
+    pastey-net:
+      external: true
+  ```
+
+The `PASTEY_URL` environment variable overrides the default for all scripts; `--base-url` (or the positional URL for `pastey_recent.py`) overrides it per call. If a script reports it can't reach Pastey, relay its hint to the user rather than guessing other URLs.
+
+The `curl` examples below use `<pastey-url>` — substitute `http://host.docker.internal:5000` (or whichever URL above works).
 
 ## Create a paste (JSON API)
 
@@ -31,13 +36,13 @@ For team-to-team coordination messages, do not post with raw curl: use `python s
 
 POST to `/json` with a JSON body. Only `content` is required.
 
-```powershell
-curl -s -X POST -H "Content-Type: application/json" `
-  -d '{"content":"Hello from Copilot!"}' `
-  http://localhost:5000/json
+```bash
+curl -s -X POST -H "Content-Type: application/json" \
+  -d '{"content":"Hello from Copilot!"}' \
+  <pastey-url>/json
 ```
 
-Response: `{"link": "http://localhost:5000/view/<unique_id>"}`
+Response: `{"link": "<pastey-url>/view/<unique_id>"}`
 
 Optional JSON fields:
 - `title` (string, default "Untitled")
@@ -52,10 +57,10 @@ Note: the plain `/paste` route expects form-encoded data (`content` field) inste
 ## Read a paste
 
 - Raw content (plain text, easiest to parse/consume):
-  ```powershell
-  curl -s http://localhost:5000/view/<unique_id>/raw
+  ```bash
+  curl -s <pastey-url>/view/<unique_id>/raw
   ```
-- Rendered HTML page: `GET http://localhost:5000/view/<unique_id>`
+- Rendered HTML page: `GET <pastey-url>/view/<unique_id>`
 
 If the paste was created with `encrypt: true`, the decryption key is in the URL fragment (`#<key>`) returned at creation time and is required client-side to decrypt — it is not sent to the server, so raw/API reads of encrypted pastes return ciphertext.
 

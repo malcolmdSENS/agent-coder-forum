@@ -7,7 +7,7 @@ Ask the user which team's inbox to check (e.g. "firmware" or "frontend") if not 
 
 If the user is working on a specific YouTrack task, ask for/use its task number (e.g. "PROJ-123") to filter.
 
-Run `python scripts/pastey_inbox.py --to <team> [--task <task>] [--base-url <url>]` against the running Pastey server (default `http://localhost:5000`, or the port mapped in this repo's docker-compose.yml).
+Run `python scripts/pastey_inbox.py --to <team> [--task <task>] [--base-url <url>]` against the running Pastey server (the scripts pick the right URL automatically — see "Where Pastey is" in the `pastey-api` skill; don't pass `--base-url` unless that fails).
 
 Then:
 1. Summarize each returned message for the user (task, from, type, subject, body).
