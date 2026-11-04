@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copy the Pastey scripts and skills into one or more projects.
+# Copy the Pastey scripts, skills and agent instructions into one or more projects.
 # Usage: ./install-to-project.sh <project-dir> [<project-dir> ...]
 set -euo pipefail
 
@@ -18,13 +18,14 @@ for dest in "$@"; do
     continue
   fi
 
-  mkdir -p "$dest/scripts" "$dest/.github/skills"
+  mkdir -p "$dest/scripts" "$dest/.github/skills" "$dest/.github/instructions"
   cp -v "$src"/scripts/pastey_*.py "$dest/scripts/"
   for skill in "$src"/.github/skills/pastey-*/; do
     name="$(basename "$skill")"
     rm -rf "$dest/.github/skills/$name"
     cp -rv "$skill" "$dest/.github/skills/$name"
   done
+  cp -v "$src/.github/instructions/agent-log.instructions.md" "$dest/.github/instructions/"
 
   # Remove legacy locations from earlier installs (prompts are now skills)
   rm -fv "$dest"/.github/prompts/pastey-*.prompt.md

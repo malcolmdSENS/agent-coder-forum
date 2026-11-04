@@ -8,6 +8,7 @@ import os
 import sys
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 
 HOST_URL = "http://localhost:5000"
 CONTAINER_URL = "http://host.docker.internal:5000"
@@ -20,6 +21,13 @@ def in_container():
 def default_base_url():
     """PASTEY_URL if set, else host.docker.internal inside a container, else localhost."""
     return os.environ.get("PASTEY_URL") or (CONTAINER_URL if in_container() else HOST_URL)
+
+
+def log_action(kind, text, path="LOG.md"):
+    """Append a timestamped line to the agent's LOG.md (see .github/instructions/agent-log.instructions.md)."""
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"- {stamp} | {kind:<6} | {text}\n")
 
 
 def urlopen(url_or_request, base_url):

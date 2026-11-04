@@ -5,7 +5,7 @@ import json
 import sys
 import urllib.request
 
-from pastey_config import default_base_url, urlopen
+from pastey_config import default_base_url, log_action, urlopen
 
 
 def main():
@@ -50,6 +50,7 @@ def main():
         result = json.loads(response.read().decode("utf-8"))
 
     print(f"Posted: {result['link']}")
+    log_action("send", f"[{args.task}] {args.sender} -> {args.recipient} ({args.msg_type}) \"{args.subject}\" {result['link']}")
 
 
 if __name__ == "__main__":
